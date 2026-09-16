@@ -59,3 +59,8 @@ test("3コースの価格表示と購入導線がある", () => {
   assert.match(app, /purchaseCourse/);
   assert.match(app, /manabi-purchases-/);
 });
+
+test("PayPal決済はサーバーAPI経由で開始する", () => {
+  assert.match(app, /\/api\/paypal\/orders/);
+  assert.match(app, /completePayPalOrder/);
+});
