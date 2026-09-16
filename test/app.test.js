@@ -40,9 +40,14 @@ test("サービス名をCloSkillとして表示する", () => {
 test("ログイン後のヘッダーに下層ページへの導線がある", () => {
   assert.match(app, /CloSkillについて/);
   assert.match(app, /href="#\/about"/);
-  assert.match(app, /マイ講座/);
   assert.match(app, /マイページ/);
   assert.match(app, /href="#\/dashboard"/);
   assert.match(app, /id="logout"/);
   assert.match(app, /function renderAbout/);
+});
+
+test("購入済み講座はマイページに表示する", () => {
+  assert.match(app, /MY PAGE/);
+  assert.match(app, /マイページから購入済みの講座をいつでも視聴できます/);
+  assert.doesNotMatch(app, /<a href="#\/dashboard">マイ講座<\/a>/);
 });

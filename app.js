@@ -58,7 +58,7 @@ function courseIsPurchased(courseId) {
 
 function renderHeader() {
   headerActions.innerHTML = state.user
-    ? `<nav class="header-nav" aria-label="メインナビゲーション"><a href="#/about">CloSkillについて</a><a href="#/dashboard">マイ講座</a><a href="#/dashboard">マイページ</a><button class="button button-ghost" id="logout">ログアウト</button></nav>`
+    ? `<nav class="header-nav" aria-label="メインナビゲーション"><a href="#/about">CloSkillについて</a><a href="#/dashboard">マイページ</a><button class="button button-ghost" id="logout">ログアウト</button></nav>`
     : "";
   document.querySelector("#logout")?.addEventListener("click", () => {
     localStorage.removeItem("manabi-session");
@@ -120,7 +120,7 @@ function renderRegister() {
 
 function renderDashboard() {
   const courses = COURSES.filter((course) => courseIsPurchased(course.id));
-  app.innerHTML = `<section class="dashboard"><div class="welcome"><div><span class="eyebrow">MY LEARNING</span><h1>${escapeHtml(state.user.name)}さん、<br class="mobile-only" />学習を続けましょう。</h1><p class="muted">購入済みの講座をいつでも視聴できます。</p></div><div class="welcome-icon">✦</div></div><div class="section-heading"><div><h2>購入した講座</h2><p class="muted">${courses.length}講座を受講できます</p></div></div><div class="course-grid">${courses.map(courseCard).join("")}</div><div class="help-banner"><span class="help-icon">?</span><div><strong>学びたい講座を探していますか？</strong><p class="muted">新しい講座の追加をお楽しみに。</p></div></div></section>`;
+  app.innerHTML = `<section class="dashboard"><div class="welcome"><div><span class="eyebrow">MY PAGE</span><h1>${escapeHtml(state.user.name)}さん、<br class="mobile-only" />学習を続けましょう。</h1><p class="muted">マイページから購入済みの講座をいつでも視聴できます。</p></div><div class="welcome-icon">✦</div></div><div class="section-heading"><div><h2>購入した講座</h2><p class="muted">${courses.length}講座を受講できます</p></div></div><div class="course-grid">${courses.map(courseCard).join("")}</div><div class="help-banner"><span class="help-icon">?</span><div><strong>学びたい講座を探していますか？</strong><p class="muted">新しい講座の追加をお楽しみに。</p></div></div></section>`;
 }
 
 function renderAbout() {
