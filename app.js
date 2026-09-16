@@ -108,7 +108,14 @@ function purchaseCourse(courseId) {
   if (!course || courseIsPurchased(courseId)) return;
   if (window.location.protocol !== "file:") {
     fetch("/api/paypal/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ courseId }) })
-      .then((response) => response.ok ? response.json() : response.json().then((body) => Promise.reject(new Error(body.error))))
+      .then(async (response) => {
+        const contentType = response.headers.get("content-type") || "";
+        const body = contentType.includes("application/json") ? await response.json() : null;
+        if (!response.ok || !body) {
+          throw new Error("PayPal決済サーバーに接続できません。サーバーを起動してからお試しください。");
+        }
+        return body;
+      })
       .then(({ approvalUrl }) => { window.location.href = approvalUrl; })
       .catch((error) => { window.alert(error.message || "決済を開始できませんでした。"); });
     return;
