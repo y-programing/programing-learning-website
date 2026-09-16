@@ -58,7 +58,7 @@ function courseIsPurchased(courseId) {
 
 function renderHeader() {
   headerActions.innerHTML = state.user
-    ? `<nav class="header-nav" aria-label="メインナビゲーション"><a href="#/about">CloSkillについて</a><a href="#/dashboard">マイ講座</a></nav><span class="user-name">${escapeHtml(state.user.name)}さん</span><button class="button button-ghost" id="logout">ログアウト</button>`
+    ? `<nav class="header-nav" aria-label="メインナビゲーション"><a href="#/about">CloSkillについて</a><a href="#/dashboard">マイ講座</a><a href="#/dashboard">マイページ</a><button class="button button-ghost" id="logout">ログアウト</button></nav>`
     : "";
   document.querySelector("#logout")?.addEventListener("click", () => {
     localStorage.removeItem("manabi-session");
