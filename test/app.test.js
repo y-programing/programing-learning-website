@@ -51,3 +51,11 @@ test("購入済み講座はマイページに表示する", () => {
   assert.match(app, /マイページから購入済みの講座をいつでも視聴できます/);
   assert.doesNotMatch(app, /<a href="#\/dashboard">マイ講座<\/a>/);
 });
+
+test("3コースの価格表示と購入導線がある", () => {
+  for (const course of ["HTML/CSSコース", "JavaScript\\(jQuery\\)コース", "WordPressコース"]) assert.match(app, new RegExp(course));
+  assert.match(app, /price/);
+  assert.match(app, /購入する/);
+  assert.match(app, /purchaseCourse/);
+  assert.match(app, /manabi-purchases-/);
+});

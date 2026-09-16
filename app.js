@@ -6,17 +6,17 @@ const USERS = loadUsers();
 
 const COURSES = [
   {
-    id: "html-css", category: "HTML/CSS", title: "はじめてのHTML & CSS", level: "初級", duration: "4時間30分", color: "blue",
+    id: "html-css", category: "HTML/CSS", title: "HTML/CSSコース", level: "初級", duration: "4時間30分", price: 19800, color: "blue",
     description: "Webページの構造とデザインを基礎から学び、レスポンシブなページを作ります。",
     videos: [["html-01", "HTMLの基本と開発環境", "12:20"], ["html-02", "CSSでレイアウトを整える", "18:45"], ["html-03", "レスポンシブデザイン入門", "21:10"]]
   },
   {
-    id: "javascript", category: "JavaScript", title: "実践JavaScript入門", level: "中級", duration: "6時間10分", color: "yellow",
+    id: "javascript", category: "JavaScript(jQuery)", title: "JavaScript(jQuery)コース", level: "中級", duration: "6時間10分", price: 24800, color: "yellow",
     description: "DOM操作や非同期処理を使って、実際に動くWebアプリケーションを作ります。",
     videos: [["js-01", "JavaScriptの基礎文法", "16:30"], ["js-02", "DOMを操作してみよう", "24:05"], ["js-03", "非同期処理とAPI", "28:40"]]
   },
   {
-    id: "wordpress", category: "WordPress", title: "WordPressサイト制作", level: "中級", duration: "5時間20分", color: "purple",
+    id: "wordpress", category: "WordPress", title: "WordPressコース", level: "中級", duration: "5時間20分", price: 22800, color: "purple",
     description: "WordPressの導入からテーマ編集まで、オリジナルサイト制作の流れを学びます。",
     videos: [["wp-01", "WordPressの始め方", "15:20"], ["wp-02", "テーマとページの編集", "22:15"], ["wp-03", "公開前のチェック", "19:50"]]
   }
@@ -28,7 +28,10 @@ const headerActions = document.querySelector("#header-actions");
 
 function loadUsers() {
   try {
-    return [...DEFAULT_USERS, ...JSON.parse(localStorage.getItem("manabi-users") || "[]")];
+    return [...DEFAULT_USERS, ...JSON.parse(localStorage.getItem("manabi-users") || "[]")].map((user) => ({
+      ...user,
+      purchasedCourseIds: JSON.parse(localStorage.getItem(`manabi-purchases-${user.id}`) || JSON.stringify(user.purchasedCourseIds))
+    }));
   } catch {
     return [...DEFAULT_USERS];
   }
@@ -77,6 +80,26 @@ function courseCard(course) {
   </a>`;
 }
 
+function formatPrice(price) {
+  return `¥${price.toLocaleString("ja-JP")}`;
+}
+
+function purchaseCourse(courseId) {
+  const course = COURSES.find((item) => item.id === courseId);
+  if (!course || courseIsPurchased(courseId)) return;
+  state.user.purchasedCourseIds.push(courseId);
+  localStorage.setItem(`manabi-purchases-${state.user.id}`, JSON.stringify(state.user.purchasedCourseIds));
+  location.hash = "#/dashboard";
+  render();
+}
+
+function renderCourses() {
+  app.innerHTML = `<section class="catalog-page"><span class="eyebrow">COURSES</span><h1>講座一覧</h1><p class="catalog-lead">Web制作に必要なスキルを、動画でじっくり学べます。購入した講座はマイページからいつでも視聴できます。</p><div class="course-grid">${COURSES.map((course) => `<article class="catalog-card"><div class="course-thumbnail ${course.color}"><span>${escapeHtml(course.category)}</span><strong>▶</strong></div><div class="course-card-body"><span class="eyebrow">${escapeHtml(course.level)}　・　${escapeHtml(course.duration)}</span><h2>${escapeHtml(course.title)}</h2><p>${escapeHtml(course.description)}</p><div class="catalog-footer"><strong class="course-price">${formatPrice(course.price)}</strong>${courseIsPurchased(course.id) ? `<a class="button button-ghost" href="#/course/${course.id}">受講する</a>` : `<button class="button button-primary purchase-button" data-course-id="${course.id}">購入する</button>`}</div></div></article>`).join("")}</div></section>`;
+  document.querySelectorAll(".purchase-button").forEach((button) => {
+    button.addEventListener("click", () => purchaseCourse(button.dataset.courseId));
+  });
+}
+
 function renderLogin() {
   app.innerHTML = `<section class="auth-layout"><div class="auth-copy"><span class="eyebrow">LEARN AT YOUR PACE</span><h1>学びたい気持ちを、<br /><em>いつでも</em>そばに。</h1><p>購入した講座を、好きな時間に、好きな場所で。あなたのペースでスキルを身につけましょう。</p><div class="feature-list"><span>✓ いつでも繰り返し視聴</span><span>✓ スマートフォンにも対応</span></div></div>
     <div class="auth-card"><h2>ログイン</h2><p class="muted">アカウントにログインして学習を続けましょう。</p><form id="login-form"><label for="email">メールアドレス</label><input id="email" type="email" autocomplete="email" required placeholder="you@example.com" /><label for="password">パスワード</label><input id="password" type="password" autocomplete="current-password" required placeholder="パスワードを入力" /><p id="login-error" class="form-error" role="alert"></p><button class="button button-primary button-wide" type="submit">ログインする</button></form><p class="auth-switch"><a href="#/register">新規登録はこちら</a></p><div class="demo-box"><strong>テスト用アカウント</strong><span>tanaka@example.com / demo123</span><span>suzuki@example.com / demo123</span></div></div></section>`;
@@ -120,11 +143,11 @@ function renderRegister() {
 
 function renderDashboard() {
   const courses = COURSES.filter((course) => courseIsPurchased(course.id));
-  app.innerHTML = `<section class="dashboard"><div class="welcome"><div><span class="eyebrow">MY PAGE</span><h1>${escapeHtml(state.user.name)}さん、<br class="mobile-only" />学習を続けましょう。</h1><p class="muted">マイページから購入済みの講座をいつでも視聴できます。</p></div><div class="welcome-icon">✦</div></div><div class="section-heading"><div><h2>購入した講座</h2><p class="muted">${courses.length}講座を受講できます</p></div></div><div class="course-grid">${courses.map(courseCard).join("")}</div><div class="help-banner"><span class="help-icon">?</span><div><strong>学びたい講座を探していますか？</strong><p class="muted">新しい講座の追加をお楽しみに。</p></div></div></section>`;
+  app.innerHTML = `<section class="dashboard"><div class="welcome"><div><span class="eyebrow">MY PAGE</span><h1>${escapeHtml(state.user.name)}さん、<br class="mobile-only" />学習を続けましょう。</h1><p class="muted">マイページから購入済みの講座をいつでも視聴できます。</p></div><div class="welcome-icon">✦</div></div><div class="section-heading"><div><h2>購入した講座</h2><p class="muted">${courses.length}講座を受講できます</p></div></div><div class="course-grid">${courses.map(courseCard).join("")}</div><a class="help-banner help-link" href="#/courses"><span class="help-icon">+</span><div><strong>新しい講座を探す</strong><p class="muted">講座一覧から学びたいコースを購入できます。</p></div></a></section>`;
 }
 
 function renderAbout() {
-  app.innerHTML = `<section class="about-page"><span class="eyebrow">ABOUT CLOSKILL</span><h1>CloSkillについて</h1><p class="about-lead">CloSkillは、学びたい人が自分のペースでスキルを身につけられる動画学習サービスです。</p><div class="about-grid"><article class="about-card"><span class="about-card-icon">▶</span><h2>いつでも学べる</h2><p class="muted">購入した講座の動画を、好きな時間に何度でも視聴できます。</p></article><article class="about-card"><span class="about-card-icon">✦</span><h2>実践的な講座</h2><p class="muted">HTML/CSS、JavaScript、WordPressなど、Web制作に役立つ講座を用意しています。</p></article><article class="about-card"><span class="about-card-icon">✓</span><h2>あなたの学習ページ</h2><p class="muted">マイ講座から購入済みの講座をすぐに確認し、続きから学習できます。</p></article></div><a class="button button-primary" href="#/dashboard">マイ講座を見る</a></section>`;
+  app.innerHTML = `<section class="about-page"><span class="eyebrow">ABOUT CLOSKILL</span><h1>CloSkillについて</h1><p class="about-lead">CloSkillは、学びたい人が自分のペースでスキルを身につけられる動画学習サービスです。</p><div class="about-grid"><article class="about-card"><span class="about-card-icon">▶</span><h2>いつでも学べる</h2><p class="muted">購入した講座の動画を、好きな時間に何度でも視聴できます。</p></article><article class="about-card"><span class="about-card-icon">✦</span><h2>実践的な講座</h2><p class="muted">HTML/CSS、JavaScript(jQuery)、WordPressなど、Web制作に役立つ講座を用意しています。</p></article><article class="about-card"><span class="about-card-icon">✓</span><h2>あなたの学習ページ</h2><p class="muted">マイページから購入済みの講座をすぐに確認し、続きから学習できます。</p></article></div><a class="button button-primary" href="#/courses">講座一覧を見る</a></section>`;
 }
 
 function renderCourse(courseId) {
@@ -158,6 +181,7 @@ function render() {
   if (path === "course" && id) return renderCourse(id);
   if (path === "watch" && id && subId) return renderWatch(id, subId);
   if (path === "about") return renderAbout();
+  if (path === "courses") return renderCourses();
   if (path === "login") return renderLogin();
   if (path === "register") return renderRegister();
   return renderDashboard();
