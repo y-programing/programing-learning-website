@@ -18,6 +18,7 @@ test("購入権限を講座表示と視聴の両方で検証する", () => {
 
 test("新規登録画面と重複メールアドレスの検証がある", () => {
   assert.match(app, /#\/register/);
+  assert.match(app, /新規登録はこちら/);
   assert.match(app, /新規アカウント登録/);
   assert.match(app, /このメールアドレスはすでに登録されています/);
   assert.match(app, /manabi-users/);
