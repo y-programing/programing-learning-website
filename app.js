@@ -58,7 +58,7 @@ function courseIsPurchased(courseId) {
 
 function renderHeader() {
   headerActions.innerHTML = state.user
-    ? `<span class="user-name">${escapeHtml(state.user.name)}さん</span><button class="button button-ghost" id="logout">ログアウト</button>`
+    ? `<nav class="header-nav" aria-label="メインナビゲーション"><a href="#/about">CloSkillについて</a><a href="#/dashboard">マイ講座</a></nav><span class="user-name">${escapeHtml(state.user.name)}さん</span><button class="button button-ghost" id="logout">ログアウト</button>`
     : "";
   document.querySelector("#logout")?.addEventListener("click", () => {
     localStorage.removeItem("manabi-session");
@@ -123,6 +123,10 @@ function renderDashboard() {
   app.innerHTML = `<section class="dashboard"><div class="welcome"><div><span class="eyebrow">MY LEARNING</span><h1>${escapeHtml(state.user.name)}さん、<br class="mobile-only" />学習を続けましょう。</h1><p class="muted">購入済みの講座をいつでも視聴できます。</p></div><div class="welcome-icon">✦</div></div><div class="section-heading"><div><h2>購入した講座</h2><p class="muted">${courses.length}講座を受講できます</p></div></div><div class="course-grid">${courses.map(courseCard).join("")}</div><div class="help-banner"><span class="help-icon">?</span><div><strong>学びたい講座を探していますか？</strong><p class="muted">新しい講座の追加をお楽しみに。</p></div></div></section>`;
 }
 
+function renderAbout() {
+  app.innerHTML = `<section class="about-page"><span class="eyebrow">ABOUT CLOSKILL</span><h1>CloSkillについて</h1><p class="about-lead">CloSkillは、学びたい人が自分のペースでスキルを身につけられる動画学習サービスです。</p><div class="about-grid"><article class="about-card"><span class="about-card-icon">▶</span><h2>いつでも学べる</h2><p class="muted">購入した講座の動画を、好きな時間に何度でも視聴できます。</p></article><article class="about-card"><span class="about-card-icon">✦</span><h2>実践的な講座</h2><p class="muted">HTML/CSS、JavaScript、WordPressなど、Web制作に役立つ講座を用意しています。</p></article><article class="about-card"><span class="about-card-icon">✓</span><h2>あなたの学習ページ</h2><p class="muted">マイ講座から購入済みの講座をすぐに確認し、続きから学習できます。</p></article></div><a class="button button-primary" href="#/dashboard">マイ講座を見る</a></section>`;
+}
+
 function renderCourse(courseId) {
   const course = COURSES.find((item) => item.id === courseId);
   if (!course) return renderNotFound();
@@ -153,6 +157,7 @@ function render() {
   if (state.user && path === "register") return (location.hash = "#/dashboard");
   if (path === "course" && id) return renderCourse(id);
   if (path === "watch" && id && subId) return renderWatch(id, subId);
+  if (path === "about") return renderAbout();
   if (path === "login") return renderLogin();
   if (path === "register") return renderRegister();
   return renderDashboard();
