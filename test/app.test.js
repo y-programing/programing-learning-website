@@ -36,3 +36,11 @@ test("サービス名をCloSkillとして表示する", () => {
   assert.doesNotMatch(index, /まなび動画/);
   assert.match(readme, /^# CloSkill/m);
 });
+
+test("ログイン後のヘッダーに下層ページへの導線がある", () => {
+  assert.match(app, /CloSkillについて/);
+  assert.match(app, /href="#\/about"/);
+  assert.match(app, /マイ講座/);
+  assert.match(app, /href="#\/dashboard"/);
+  assert.match(app, /function renderAbout/);
+});
