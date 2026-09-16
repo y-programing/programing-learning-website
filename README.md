@@ -34,6 +34,8 @@ npm start      # PayPal API（sandbox）を起動
 
 PayPal連携を使う場合は`.env.example`を参考に、`PAYPAL_ENV`、`PAYPAL_CLIENT_ID`、`PAYPAL_CLIENT_SECRET`、`PAYPAL_WEBHOOK_ID`をサーバー環境へ設定してください。秘密鍵はブラウザへ渡さず、`.env`をGitへコミットしないでください。
 
+GitHub Pagesなどの静的ホスティングでは`/api/paypal/orders`が動作しないため、購入前にPayPal APIサーバー（`npm start`）を別途起動し、フロントエンドのAPI URLをそのサーバーへ向けてください。静的ページだけでPayPal秘密鍵を扱うことはできません。
+
 このリポジトリの認証・購入状態はまだ静的デモ用です。実運用前に、サーバーセッション/HttpOnly Cookie、ユーザーIDに紐づくDBの注文・購入履歴、CSRF対策、レート制限、Webhookの冪等性、監査ログを追加してください。PayPalの成功リダイレクトだけを購入根拠にせず、Webhookまたはサーバー側のキャプチャ結果をDBへ保存して動画APIでも再検証してください。
 
 ## 本番化で置き換える箇所

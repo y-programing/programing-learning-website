@@ -63,4 +63,5 @@ test("3コースの価格表示と購入導線がある", () => {
 test("PayPal決済はサーバーAPI経由で開始する", () => {
   assert.match(app, /\/api\/paypal\/orders/);
   assert.match(app, /completePayPalOrder/);
+  assert.match(app, /PayPal決済サーバーに接続できません/);
 });
