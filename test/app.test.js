@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const app = await readFile("app.js", "utf8");
 const readme = await readFile("README.md", "utf8");
+const index = await readFile("index.html", "utf8");
 
 test("モックユーザーは購入講座IDを持つ", () => {
   assert.match(app, /purchasedCourseIds/);
@@ -28,4 +29,10 @@ test("必要な講座カテゴリと日本語セットアップ情報がある",
   for (const category of ["HTML\/CSS", "JavaScript", "WordPress"]) assert.match(app, new RegExp(category));
   assert.match(readme, /npm run build/);
   assert.match(readme, /環境変数/);
+});
+
+test("サービス名をCloSkillとして表示する", () => {
+  assert.match(index, /CloSkill/);
+  assert.doesNotMatch(index, /まなび動画/);
+  assert.match(readme, /^# CloSkill/m);
 });
