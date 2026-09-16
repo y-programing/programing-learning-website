@@ -1,7 +1,8 @@
-const USERS = [
+const DEFAULT_USERS = [
   { id: "user-tanaka", name: "田中 花子", email: "tanaka@example.com", password: "demo123", purchasedCourseIds: ["html-css", "javascript"] },
   { id: "user-suzuki", name: "鈴木 太郎", email: "suzuki@example.com", password: "demo123", purchasedCourseIds: ["wordpress"] }
 ];
+const USERS = loadUsers();
 
 const COURSES = [
   {
@@ -24,6 +25,19 @@ const COURSES = [
 const state = { user: getStoredUser() };
 const app = document.querySelector("#app");
 const headerActions = document.querySelector("#header-actions");
+
+function loadUsers() {
+  try {
+    return [...DEFAULT_USERS, ...JSON.parse(localStorage.getItem("manabi-users") || "[]")];
+  } catch {
+    return [...DEFAULT_USERS];
+  }
+}
+
+function saveUsers() {
+  const customUsers = USERS.filter((user) => user.id.startsWith("user-custom-"));
+  localStorage.setItem("manabi-users", JSON.stringify(customUsers));
+}
 
 function getStoredUser() {
   try {
@@ -65,7 +79,7 @@ function courseCard(course) {
 
 function renderLogin() {
   app.innerHTML = `<section class="auth-layout"><div class="auth-copy"><span class="eyebrow">LEARN AT YOUR PACE</span><h1>学びたい気持ちを、<br /><em>いつでも</em>そばに。</h1><p>購入した講座を、好きな時間に、好きな場所で。あなたのペースでスキルを身につけましょう。</p><div class="feature-list"><span>✓ いつでも繰り返し視聴</span><span>✓ スマートフォンにも対応</span></div></div>
-    <div class="auth-card"><h2>ログイン</h2><p class="muted">アカウントにログインして学習を続けましょう。</p><form id="login-form"><label for="email">メールアドレス</label><input id="email" type="email" autocomplete="email" required placeholder="you@example.com" /><label for="password">パスワード</label><input id="password" type="password" autocomplete="current-password" required placeholder="パスワードを入力" /><p id="login-error" class="form-error" role="alert"></p><button class="button button-primary button-wide" type="submit">ログインする</button></form><div class="demo-box"><strong>テスト用アカウント</strong><span>tanaka@example.com / demo123</span><span>suzuki@example.com / demo123</span></div></div></section>`;
+    <div class="auth-card"><h2>ログイン</h2><p class="muted">アカウントにログインして学習を続けましょう。</p><form id="login-form"><label for="email">メールアドレス</label><input id="email" type="email" autocomplete="email" required placeholder="you@example.com" /><label for="password">パスワード</label><input id="password" type="password" autocomplete="current-password" required placeholder="パスワードを入力" /><p id="login-error" class="form-error" role="alert"></p><button class="button button-primary button-wide" type="submit">ログインする</button></form><p class="auth-switch">アカウントをお持ちでない方は <a href="#/register">新規登録</a></p><div class="demo-box"><strong>テスト用アカウント</strong><span>tanaka@example.com / demo123</span><span>suzuki@example.com / demo123</span></div></div></section>`;
   document.querySelector("#login-form").addEventListener("submit", (event) => {
     event.preventDefault();
     const email = event.target.email.value.trim();
@@ -75,6 +89,28 @@ function renderLogin() {
       document.querySelector("#login-error").textContent = "メールアドレスまたはパスワードが正しくありません。";
       return;
     }
+    localStorage.setItem("manabi-session", user.id);
+    state.user = user;
+    location.hash = "#/dashboard";
+    render();
+  });
+}
+
+function renderRegister() {
+  app.innerHTML = `<section class="auth-layout"><div class="auth-copy"><span class="eyebrow">START LEARNING</span><h1>今日から学習を<br /><em>はじめよう。</em></h1><p>無料アカウントを作成して、あなたの学習ページを用意しましょう。</p><div class="feature-list"><span>✓ 登録はかんたん1分</span><span>✓ 購入した講座をまとめて管理</span></div></div>
+    <div class="auth-card"><h2>新規アカウント登録</h2><p class="muted">登録情報を入力してください。</p><form id="register-form"><label for="register-name">お名前</label><input id="register-name" type="text" autocomplete="name" required placeholder="山田 太郎" /><label for="register-email">メールアドレス</label><input id="register-email" type="email" autocomplete="email" required placeholder="you@example.com" /><label for="register-password">パスワード</label><input id="register-password" type="password" autocomplete="new-password" minlength="6" required placeholder="6文字以上" /><p id="register-error" class="form-error" role="alert"></p><button class="button button-primary button-wide" type="submit">アカウントを作成</button></form><p class="auth-switch">すでにアカウントをお持ちの方は <a href="#/login">ログイン</a></p></div></section>`;
+  document.querySelector("#register-form").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const name = event.target["register-name"].value.trim();
+    const email = event.target["register-email"].value.trim().toLowerCase();
+    const password = event.target["register-password"].value;
+    if (USERS.some((user) => user.email === email)) {
+      document.querySelector("#register-error").textContent = "このメールアドレスはすでに登録されています。";
+      return;
+    }
+    const user = { id: `user-custom-${Date.now()}`, name, email, password, purchasedCourseIds: [] };
+    USERS.push(user);
+    saveUsers();
     localStorage.setItem("manabi-session", user.id);
     state.user = user;
     location.hash = "#/dashboard";
@@ -112,11 +148,13 @@ function renderNotFound() {
 function render() {
   renderHeader();
   const [path, id, subId] = location.hash.replace(/^#\/?/, "").split("/");
-  if (!state.user && path !== "login") return renderLogin();
+  if (!state.user && path !== "login" && path !== "register") return renderLogin();
   if (state.user && path === "login") return (location.hash = "#/dashboard");
+  if (state.user && path === "register") return (location.hash = "#/dashboard");
   if (path === "course" && id) return renderCourse(id);
   if (path === "watch" && id && subId) return renderWatch(id, subId);
   if (path === "login") return renderLogin();
+  if (path === "register") return renderRegister();
   return renderDashboard();
 }
 
