@@ -26,6 +26,25 @@ const state = { user: getStoredUser() };
 const app = document.querySelector("#app");
 const headerActions = document.querySelector("#header-actions");
 
+async function completePayPalOrder() {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get("token");
+  if (params.get("paypal") !== "success" || !orderId) return;
+  try {
+    const response = await fetch(`/api/paypal/orders/${encodeURIComponent(orderId)}/capture`, { method: "POST" });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error);
+    if (state.user && !state.user.purchasedCourseIds.includes(result.courseId)) {
+      state.user.purchasedCourseIds.push(result.courseId);
+      localStorage.setItem(`manabi-purchases-${state.user.id}`, JSON.stringify(state.user.purchasedCourseIds));
+    }
+    window.history.replaceState({}, "", window.location.pathname);
+    location.hash = "#/dashboard";
+  } catch (error) {
+    window.alert(error.message || "決済の確定に失敗しました。");
+  }
+}
+
 function loadUsers() {
   try {
     return [...DEFAULT_USERS, ...JSON.parse(localStorage.getItem("manabi-users") || "[]")].map((user) => ({
@@ -87,6 +106,13 @@ function formatPrice(price) {
 function purchaseCourse(courseId) {
   const course = COURSES.find((item) => item.id === courseId);
   if (!course || courseIsPurchased(courseId)) return;
+  if (window.location.protocol !== "file:") {
+    fetch("/api/paypal/orders", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ courseId }) })
+      .then((response) => response.ok ? response.json() : response.json().then((body) => Promise.reject(new Error(body.error))))
+      .then(({ approvalUrl }) => { window.location.href = approvalUrl; })
+      .catch((error) => { window.alert(error.message || "決済を開始できませんでした。"); });
+    return;
+  }
   state.user.purchasedCourseIds.push(courseId);
   localStorage.setItem(`manabi-purchases-${state.user.id}`, JSON.stringify(state.user.purchasedCourseIds));
   location.hash = "#/dashboard";
@@ -189,3 +215,4 @@ function render() {
 
 window.addEventListener("hashchange", render);
 render();
+completePayPalOrder();
