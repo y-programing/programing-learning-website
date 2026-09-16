@@ -41,6 +41,8 @@ test("ログイン後のヘッダーに下層ページへの導線がある", ()
   assert.match(app, /CloSkillについて/);
   assert.match(app, /href="#\/about"/);
   assert.match(app, /マイ講座/);
+  assert.match(app, /マイページ/);
   assert.match(app, /href="#\/dashboard"/);
+  assert.match(app, /id="logout"/);
   assert.match(app, /function renderAbout/);
 });
