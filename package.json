@@ -1,0 +1,12 @@
+{
+  "name": "member-video-learning-site",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "会員制動画学習サイトの最小構成サンプル",
+  "scripts": {
+    "test": "node --test",
+    "lint": "node --check app.js",
+    "build": "node build.mjs"
+  }
+}
