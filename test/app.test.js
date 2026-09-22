@@ -62,6 +62,7 @@ test("CloSkillについてに使い方と開発者紹介がある", () => {
 
 test("使い方と開発者紹介のセクション幅を揃える", () => {
   assert.match(styles, /\.developer-section\{max-width:none\}/);
+  assert.doesNotMatch(styles, /\.developer-section\{max-width:720px/);
 });
 
 test("ログアウト状態でも紹介ページと講座一覧へ移動できる", () => {
