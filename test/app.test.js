@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const app = await readFile("app.js", "utf8");
+const styles = await readFile("styles.css", "utf8");
 const readme = await readFile("README.md", "utf8");
 const index = await readFile("index.html", "utf8");
 
@@ -57,6 +58,10 @@ test("CloSkillについてに使い方と開発者紹介がある", () => {
   assert.match(app, /開発者紹介/);
   assert.match(app, /アカウントを作成/);
   assert.match(app, /Y-programing/);
+});
+
+test("使い方と開発者紹介のセクション幅を揃える", () => {
+  assert.match(styles, /\.developer-section\{max-width:none\}/);
 });
 
 test("ログアウト状態でも紹介ページと講座一覧へ移動できる", () => {
