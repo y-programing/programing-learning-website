@@ -59,6 +59,12 @@ test("CloSkillについてに使い方と開発者紹介がある", () => {
   assert.match(app, /Y-programing/);
 });
 
+test("ログアウト状態でも紹介ページと講座一覧へ移動できる", () => {
+  assert.match(app, /href="#\/about">CloSkillについて/);
+  assert.match(app, /href="#\/courses">講座一覧/);
+  assert.match(app, /"about", "courses", "login", "register"\].includes\(path\)/);
+});
+
 test("3コースの価格表示と購入導線がある", () => {
   for (const course of ["HTML/CSSコース", "JavaScript\\(jQuery\\)コース", "WordPressコース"]) assert.match(app, new RegExp(course));
   assert.match(app, /price/);
