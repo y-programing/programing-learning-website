@@ -81,7 +81,7 @@ function courseIsPurchased(courseId) {
 function renderHeader() {
   headerActions.innerHTML = state.user
     ? `<nav class="header-nav" aria-label="メインナビゲーション"><a href="#/about">CloSkillについて</a><a href="#/dashboard">マイページ</a><button class="button button-ghost" id="logout">ログアウト</button></nav>`
-    : "";
+    : `<nav class="header-nav" aria-label="メインナビゲーション"><a href="#/about">CloSkillについて</a><a href="#/courses">講座一覧</a><a class="button button-ghost" href="#/login">ログイン</a></nav>`;
   document.querySelector("#logout")?.addEventListener("click", () => {
     localStorage.removeItem("manabi-session");
     state.user = null;
@@ -208,7 +208,7 @@ function renderNotFound() {
 function render() {
   renderHeader();
   const [path, id, subId] = location.hash.replace(/^#\/?/, "").split("/");
-  if (!state.user && path !== "login" && path !== "register") return renderLogin();
+  if (!state.user && !["about", "courses", "login", "register"].includes(path)) return renderLogin();
   if (state.user && path === "login") return (location.hash = "#/dashboard");
   if (state.user && path === "register") return (location.hash = "#/dashboard");
   if (path === "course" && id) return renderCourse(id);
