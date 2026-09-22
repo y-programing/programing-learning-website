@@ -71,8 +71,9 @@ test("開発者カードの説明欄を中央揃えにする", () => {
 });
 
 test("使い方の番号バッジと説明の左端を揃える", () => {
-  assert.match(styles, /\.usage-step\{display:block\}/);
-  assert.match(styles, /\.usage-step>span\{display:grid;place-items:center;width:38px;height:38px/);
+  assert.match(styles, /\.usage-steps\{grid-template-columns:1fr;gap:24px\}/);
+  assert.match(styles, /\.usage-step\{align-items:flex-start;gap:20px;padding:28px 30px\}/);
+  assert.match(styles, /\.usage-step>span\{display:block;flex:0 0 38px;font-size:25px/);
 });
 
 test("ログアウト状態でも紹介ページと講座一覧へ移動できる", () => {
