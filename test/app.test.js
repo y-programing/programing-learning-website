@@ -52,6 +52,13 @@ test("購入済み講座はマイページに表示する", () => {
   assert.doesNotMatch(app, /<a href="#\/dashboard">マイ講座<\/a>/);
 });
 
+test("CloSkillについてに使い方と開発者紹介がある", () => {
+  assert.match(app, /CloSkillの使い方/);
+  assert.match(app, /開発者紹介/);
+  assert.match(app, /アカウントを作成/);
+  assert.match(app, /Y-programing/);
+});
+
 test("3コースの価格表示と購入導線がある", () => {
   for (const course of ["HTML/CSSコース", "JavaScript\\(jQuery\\)コース", "WordPressコース"]) assert.match(app, new RegExp(course));
   assert.match(app, /price/);
