@@ -66,6 +66,10 @@ test("使い方と開発者紹介のセクション幅を揃える", () => {
   assert.match(styles, /\.about-section\{width:100%/);
 });
 
+test("開発者カードの説明欄を中央揃えにする", () => {
+  assert.match(styles, /\.developer-card>div:last-child\{flex:1;text-align:center\}/);
+});
+
 test("ログアウト状態でも紹介ページと講座一覧へ移動できる", () => {
   assert.match(app, /href="#\/about">CloSkillについて/);
   assert.match(app, /href="#\/courses">講座一覧/);
