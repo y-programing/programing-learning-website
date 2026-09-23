@@ -70,6 +70,12 @@ test("開発者カードの説明欄を中央揃えにする", () => {
   assert.match(styles, /\.developer-card>div:last-child\{flex:1;text-align:center\}/);
 });
 
+test("使い方の番号バッジと説明の左端を揃える", () => {
+  assert.match(styles, /\.usage-steps\{grid-template-columns:1fr;gap:24px\}/);
+  assert.match(styles, /\.usage-step\{align-items:flex-start;gap:20px;padding:28px 30px\}/);
+  assert.match(styles, /\.usage-step>span\{display:block;flex:0 0 38px;font-size:25px/);
+});
+
 test("ログアウト状態でも紹介ページと講座一覧へ移動できる", () => {
   assert.match(app, /href="#\/about">CloSkillについて/);
   assert.match(app, /href="#\/courses">講座一覧/);
