@@ -1,4 +1,4 @@
-# CloSkill（会員制動画学習サイト）
+# CroSkill（会員制動画学習サイト）
 
 購入済み講座だけを一覧・視聴できる、日本語UIの学習サイトサンプルです。依存パッケージなしのVanilla HTML/CSS/JavaScriptで構成しています。
 
