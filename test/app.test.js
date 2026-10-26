@@ -32,14 +32,14 @@ test("必要な講座カテゴリと日本語セットアップ情報がある",
   assert.match(readme, /環境変数/);
 });
 
-test("サービス名をCloSkillとして表示する", () => {
-  assert.match(index, /CloSkill/);
+test("サービス名をCroSkillとして表示する", () => {
+  assert.match(index, /CroSkill/);
   assert.doesNotMatch(index, /まなび動画/);
-  assert.match(readme, /^# CloSkill/m);
+  assert.match(readme, /^# CroSkill/m);
 });
 
 test("ログイン後のヘッダーに下層ページへの導線がある", () => {
-  assert.match(app, /CloSkillについて/);
+  assert.match(app, /CroSkillについて/);
   assert.match(app, /href="#\/about"/);
   assert.match(app, /マイページ/);
   assert.match(app, /href="#\/dashboard"/);
@@ -53,8 +53,8 @@ test("購入済み講座はマイページに表示する", () => {
   assert.doesNotMatch(app, /<a href="#\/dashboard">マイ講座<\/a>/);
 });
 
-test("CloSkillについてに使い方と開発者紹介がある", () => {
-  assert.match(app, /CloSkillの使い方/);
+test("CroSkillについてに使い方と開発者紹介がある", () => {
+  assert.match(app, /CroSkillの使い方/);
   assert.match(app, /開発者紹介/);
   assert.match(app, /アカウントを作成/);
   assert.match(app, /Y-programing/);
@@ -77,7 +77,7 @@ test("使い方の番号バッジと説明の左端を揃える", () => {
 });
 
 test("ログアウト状態でも紹介ページと講座一覧へ移動できる", () => {
-  assert.match(app, /href="#\/about">CloSkillについて/);
+  assert.match(app, /href="#\/about">CroSkillについて/);
   assert.match(app, /href="#\/courses">講座一覧/);
   assert.match(app, /"about", "courses", "login", "register"\].includes\(path\)/);
 });
